@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap');
+
+:root {
+  --height-banner-img: 1024px;
+  --color-white: #ffffff;
+  --color-light-gray: #f8f8f7;
+  --color-dark-gray: #8c8c8c;
+  --color-black: #1d1d1d;
+  --color-light-pink: rgb(251, 224, 220);
+  --color-dark-pink: #ff868e;
+  --color-purple: #b4b7ff;
+  --color-light-purple: #e1e2ff;
+  --color-orange: #ffd280;
+  --color-light-orange: #ffedcc;
+}
+body {
+  font-family: Jost, sans-serif;
+  background-color: var(--color-light-gray);
+}
+.main {
+  min-height: 100vh;
+  padding: 30px;
+  display: flex;
+}
+.home {
+  max-width: 446px;
+  margin: 0 auto;
+}
+.outlet {
+  width: 680px;
+  margin-left: 30px;
+}

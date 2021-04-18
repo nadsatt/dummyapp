@@ -1,0 +1,13 @@
+.banner {
+  height: 100%;
+  border-radius: 20px;
+  background-color: var(--color-light-pink);
+}
+.banner__image {
+  width: 775px;
+  height: 1024px;
+  position: absolute;
+  /* to align img vertically on screen of any height */
+  top: calc((var(--height-banner-img) - 100vh) / -2);
+  right: 0;
+}

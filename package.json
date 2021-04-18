@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "start": "parcel ./index.html",
-    "lint:js": "npx eslint --cache **/*.js",
+    "lint:js": "npx eslint --cache '**/*.js'",
     "lint:js:fix": "npm run lint:js -- --fix",
     "prettify": "npx prettier --write **/*.{js,css,md,html}",
     "lint": "npm run lint:js:fix && npm run prettify",
@@ -25,10 +25,14 @@
     "url": "https://github.com/nadsatt/dummyapp/issues"
   },
   "homepage": "https://github.com/nadsatt/dummyapp#readme",
-  "dependencies": {},
+  "dependencies": {
+    "http2": "^3.3.7",
+    "reset.css": "^2.0.2"
+  },
   "devDependencies": {
     "@babel/core": "^7.13.14",
     "@babel/eslint-parser": "^7.13.14",
+    "@babel/plugin-proposal-optional-chaining": "^7.13.12",
     "@babel/preset-env": "^7.13.12",
     "autoprefixer": "^9.8.6",
     "babel-preset-env": "^1.7.0",
@@ -44,6 +48,7 @@
     "shx": "^0.3.3"
   },
   "babel": {
+    "plugins": ["@babel/plugin-proposal-optional-chaining"],
     "presets": [
       [
         "env",
