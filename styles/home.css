@@ -36,8 +36,8 @@
 .menu-item * {
   pointer-events: none;
 }
-.menu-item:first-of-type {
-  margin-right: 16px;
+.menu-item:nth-of-type(2) {
+  margin: 0 16px;
 }
 .menu-item__image-wrapper {
   height: 198px;
@@ -48,18 +48,25 @@
   justify-content: center;
   align-items: center;
 }
-.menu-item[data-outlet-content='voting'] .menu-item__image-wrapper {
+.menu-item[data-content='voting'] .menu-item__image-wrapper {
   background-color: var(--color-purple);
   border-color: var(--color-light-purple);
 }
-.menu-item[data-outlet-content='gallery'] .menu-item__image-wrapper {
+.menu-item[data-content='breeds'] .menu-item__image-wrapper {
+  background-color: var(--color-green);
+  border-color: var(--color-light-green);
+}
+.menu-item[data-content='gallery'] .menu-item__image-wrapper {
   background-color: var(--color-orange);
   border-color: var(--color-light-orange);
 }
-.menu-item[data-outlet-content='voting'] .menu-item__image {
+.menu-item[data-content='voting'] .menu-item__image {
   width: 100px;
 }
-.menu-item[data-outlet-content='gallery'] .menu-item__image {
+.menu-item[data-content='breeds'] .menu-item__image {
+  width: 117px;
+}
+.menu-item[data-content='gallery'] .menu-item__image {
   width: 112px;
 }
 .menu-item__button {

@@ -10,6 +10,8 @@
   --color-dark-pink: #ff868e;
   --color-purple: #b4b7ff;
   --color-light-purple: #e1e2ff;
+  --color-green: #97eab9;
+  --color-light-green: #d5f7e3;
   --color-orange: #ffd280;
   --color-light-orange: #ffedcc;
 }
@@ -26,7 +28,19 @@ body {
   max-width: 446px;
   margin: 0 auto;
 }
-.outlet {
+.content-wrapper {
   width: 680px;
   margin-left: 30px;
+}
+.content-wrapper-header {
+  background-color: var(--color-white);
+  border-radius: 20px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.content-wrapper-header input {
+  text-align: center;
 }
