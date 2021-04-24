@@ -8,6 +8,7 @@
   --color-black: #1d1d1d;
   --color-light-pink: rgb(251, 224, 220);
   --color-dark-pink: #ff868e;
+  --color-transparent-pink: rgba(255, 134, 142, 0.6);
   --color-purple: #b4b7ff;
   --color-light-purple: #e1e2ff;
   --color-green: #97eab9;
@@ -23,24 +24,18 @@ body {
   min-height: 100vh;
   padding: 30px;
   display: flex;
+  justify-content: flex-end;
 }
 .home {
-  max-width: 446px;
-  margin: 0 auto;
+  width: 446px;
+  position: fixed;
+  left: calc((100vw - 680px - 446px - 90px) / 2 + 30px);
+  top: 30px;
 }
 .content-wrapper {
   width: 680px;
   margin-left: 30px;
-}
-.content-wrapper-header {
-  background-color: var(--color-white);
-  border-radius: 20px;
-  height: 60px;
+  min-height: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.content-wrapper-header input {
-  text-align: center;
+  flex-direction: column;
 }

@@ -1,0 +1,29 @@
+.breeds-item {
+  position: relative;
+  cursor: pointer;
+}
+.breeds-item__overlap {
+  display: none;
+}
+.breeds-item:hover .breeds-item__overlap {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  background-color: var(--color-transparent-pink);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 10px;
+}
+.breeds-item__overlap-heading {
+  background-color: var(--color-white);
+  padding: 5px 42px;
+  border-radius: 10px;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-dark-pink);
+}
