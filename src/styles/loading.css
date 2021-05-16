@@ -1,0 +1,14 @@
+.alert {
+  border-radius: 10px;
+  font-size: 16px;
+  line-height: 24px;
+  padding: 18px 20px;
+}
+.error-alert {
+  background-color: var(--color-light-pink);
+  color: var(--color-dark-pink);
+}
+.info-alert {
+  background-color: var(--color-light-gray);
+  color: var(--color-dark-gray);
+}
