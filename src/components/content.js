@@ -1,3 +1,7 @@
+/** @jsx createElement */
+/** @jsxFrag createFragment */
+import { createElement, createFragment } from '../framework/element';
+
 import { Voting } from '../components/voting';
 import { Breeds } from '../components/breeds';
 import { Gallery } from '../components/gallery';
@@ -5,25 +9,35 @@ import { BreedDetails } from '../components/breed-details';
 import { Search } from '../components/search';
 import { Banner } from '../components/banner';
 import { icons } from '../../assets/data/icons';
+import renderApp from '../framework/render';
+import updateState from '../framework/update';
 
 export function ContentWrapper() {
   const { content } = dataStore;
 
   if (content === 'banner') {
-    return Banner();
-  }
-  return (
-    SecondaryMenu() +
-    (content === 'voting'
-      ? Voting()
-      : content === 'breeds'
-      ? Breeds()
-      : content === 'gallery'
-      ? Gallery()
-      : content === 'breed-details'
-      ? BreedDetails()
-      : Search())
-  );
+    return (
+      <section class="content-wrapper">
+        <Banner />
+      </section>
+    );
+  } else
+    return (
+      <section class="content-wrapper">
+        <SecondaryMenu />
+        {content === 'voting' ? (
+          <Voting />
+        ) : content === 'breeds' ? (
+          <Breeds />
+        ) : content === 'gallery' ? (
+          <Gallery />
+        ) : content === 'breed-details' ? (
+          <BreedDetails />
+        ) : (
+          <Search />
+        )}
+      </section>
+    );
 }
 
 function SecondaryMenu() {
@@ -40,25 +54,50 @@ function SecondaryMenu() {
     }, 0);
   }
 
-  return `
+  return (
     <nav class="secondary-menu">
-      <input class="form-control"
-       id="search-control"
-       placeholder="Search for breeds"
-       onclick="window.updateState({content: 'search'}), window.renderApp()"
-       oninput="window.updateState({search: this.value, searchTimeoutPassed: false, searchResults: null}), window.renderApp()"
-       type="text">
-    </nav>`;
+      <input
+        class="form-control"
+        id="search-control"
+        placeholder="Search for breeds"
+        onclick={() => {
+          updateState({ content: 'search' });
+          renderApp();
+        }}
+        oninput={event => {
+          updateState({
+            search: event.target.value,
+            searchTimeoutPassed: false,
+            searchResults: null,
+          });
+          renderApp();
+        }}
+        type="text"
+      />
+    </nav>
+  );
 }
 
-export function ContentItem(url, name) {
-  return `
-    <img class="content-item__image" src="${url}">
-    <div class="content-item__overlap ${
-      name ? 'content-item__name-overlap' : 'content-item__heart-overlap'
-    }">
-      <h4 class="content-item__overlap-heading ${
-        name ? 'content-item__name-overlap-heading' : 'content-item__heart-overlap-heading'
-      }">${name ? name : icons.heart}</h4>
-    </div>`;
+export function ContentItem({ url, name }) {
+  if (name) {
+    return (
+      <>
+        <img class="content-item__image" src={url} />
+        <div class="content-item__overlap content-item__name-overlap">
+          <h4 class="content-item__overlap-heading content-item__name-overlap-heading">{name}</h4>
+        </div>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <img class="content-item__image" src={url} />
+        <div class="content-item__overlap content-item__heart-overlap">
+          <h4 class="content-item__overlap-heading content-item__heart-overlap-heading">
+            {icons.heart}
+          </h4>
+        </div>
+      </>
+    );
+  }
 }

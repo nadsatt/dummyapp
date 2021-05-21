@@ -1,13 +1,27 @@
-import { icons } from '../../assets/data/icons';
+/* eslint-disable prettier/prettier */
+/** @jsx createElement */
+/** @jsxFrag createFragment */
+import { createElement } from '../framework/element';
 
 export function Loader() {
-  return `<div class="loader">${icons.loader}</div>`;
+  return (
+    <div class="lds-roller">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  );
 }
 
-export function ErrorAlert(message) {
-  return `<p class="alert error-alert">${message}</p>`;
+export function ErrorAlert({ error }) {
+  return <p class="alert error-alert">{error}</p>;
 }
 
-export function InfoAlert(info) {
-  return `<div class="alert info-alert">${info}</div>`;
+export function InfoAlert({ message }) {
+  return <div class="alert info-alert">{message}</div>;
 }

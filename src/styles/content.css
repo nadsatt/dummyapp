@@ -106,6 +106,9 @@ input {
 }
 .content-header__back-label {
   width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .content-header__name-label {
   width: 143px;

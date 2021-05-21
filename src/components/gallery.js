@@ -1,31 +1,55 @@
-import { icons } from '../../assets/data/icons';
+/* eslint-disable prettier/prettier */
+/** @jsx createElement */
+/** @jsxFrag createFragment */
+import { createElement } from '../framework/element';
+
+import backImage from '../../assets/images/back.png';
 import { ErrorAlert, Loader, InfoAlert } from '../components/loading';
 import { ContentItem } from './content';
 import updateState from '../framework/update';
 import { getBreeds } from '../data/breedsApi';
 import { getImagesByQuery } from '../data/imagesApi';
+import renderApp from '../framework/render';
+import Link from '../components/Link/link';
 
 export function Gallery() {
-  return `
+  return (
     <div class="gallery content">
-      <header class="gallery-header content-header">${GalleryHeader()}</header>
-      <div class="content-body gallery-body">${GalleryBody()}</div>
-    </div>`;
+      <GalleryHeader />
+      <GalleryBody />
+    </div>
+  );
 }
 
 function GalleryHeader() {
-  return `
-    <a class="content-header__label content-header__back-label" data-content="banner" onclick="window.updateState({...window.initialDataStore, content: 'banner'}), window.renderApp()">${icons.back}</a>
-    <a class="content-header__label content-header__name-label content-header__current-label">gallery</a>`;
+  return (
+    <header class="gallery-header content-header">
+      <Link
+        classes="content-header__label content-header__back-label"
+        onClickCB={() => {
+          updateState({ ...window.initialDataStore, content: 'banner' });
+          renderApp();
+        }}
+      >
+        <img src={backImage} />
+      </Link>
+      <Link classes="content-header__label content-header__name-label content-header__current-label">
+        gallery
+      </Link>
+    </header>
+  );
 }
 
 function GalleryBody() {
-  const { breedNamesLoadingError, breedNames } = dataStore;
-
-  if (breedNamesLoadingError) {
-    return ErrorAlert(breedNamesLoadingError);
-  } else if (breedNames) {
-    return `${GalleryForm()} ${GalleryList()}`;
+  if (dataStore.breedNamesLoadingError) {
+    return <ErrorAlert error={dataStore.breedNamesLoadingError} />;
+  } else if (dataStore.breedNames) {
+    return (
+      <div class="content-body gallery-body">
+        <GalleryForm />
+        <GalleryList />
+      </div>
+    );
   } else {
     getBreeds(100)
       .then(breeds => {
@@ -38,7 +62,7 @@ function GalleryBody() {
         renderApp();
       });
 
-    return Loader();
+    return <Loader />;
   }
 }
 
@@ -51,51 +75,77 @@ function GalleryForm() {
     galleryLimit: limit,
   } = dataStore;
 
-  return `
-  <form class="content-form gallery-form">
-    <div class="form-control">
-      <label>Order</label>
-      <select class="form-control" name="galleryOrder">
-        <option value="rand" ${order === 'rand' ? 'selected' : ''}>Random</option>
-        <option value="desc" ${order === 'desc' ? 'selected' : ''}>Desc</option>
-        <option value="asc" ${order === 'asc' ? 'selected' : ''}>Asc</option>
-      </select>
-    </div>
-    <div class="form-control">
-      <label>Type</label>
-      <select class="form-control" name="galleryType">
-        <option value="all" ${type === 'all' ? 'selected' : ''}>All</option>
-        <option value="static" ${type === 'static' ? 'selected' : ''}>Static</option>
-        <option value="gif" ${type === 'gif' ? 'selected' : ''}>Animated</option>
-      </select>
-    </div>
-    <div class="form-control">
-      <label>Breed</label>
-      <select class="form-control" name="galleryBreed">
-        <option value="0" ${breed === 0 ? 'selected' : ''}>None</option>
-        ${breedNames
-          .map(
-            ([name, id]) =>
-              `<option value="${id}" ${breed === id ? 'selected' : ''}>${name}</option>`,
-          )
-          .join('')}
-      </select>
-    </div>
-    <div class="form-control">
-      <label>Limit</label>
-      <select class="form-control" name="galleryLimit">
-        ${[5, 10, 15, 20]
-          .map(
-            number =>
-              `<option value="${number}" ${
-                limit === number ? 'selected' : ''
-              }>${number} items per page</option>`,
-          )
-          .join('')}
-      </select>
-    </div>
-    <button role="submit" onclick="event.preventDefault(), window.updateState({images: null, galleryOrder: this.form[0].value, galleryType: this.form[1].value, galleryBreed: +this.form[2].value, galleryLimit: +this.form[3].value}), window.renderApp()">Update items</button>
-    </form>`;
+  return (
+    <form class="content-form gallery-form">
+      <div class="form-control">
+        <label>Order</label>
+        <select class="form-control" name="galleryOrder">
+          <option value="rand" selected={order === 'rand'}>
+            Random
+          </option>
+          <option value="desc" selected={order === 'desc'}>
+            Desc
+          </option>
+          <option value="asc" selected={order === 'asc'}>
+            Asc
+          </option>
+        </select>
+      </div>
+      <div class="form-control">
+        <label>Type</label>
+        <select class="form-control" name="galleryType">
+          <option value="all" selected={type === 'all'}>
+            All
+          </option>
+          <option value="static" selected={type === 'static'}>
+            Static
+          </option>
+          <option value="gif" selected={type === 'gif'}>
+            Animated
+          </option>
+        </select>
+      </div>
+      <div class="form-control">
+        <label>Breed</label>
+        <select class="form-control" name="galleryBreed">
+          <option value="0" selected={breed === 0}>
+            None
+          </option>
+          {breedNames.map(([name, id]) => (
+            <option value={id} selected={breed === id}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div class="form-control">
+        <label>Limit</label>
+        <select class="form-control" name="galleryLimit">
+          {[5, 10, 15, 20].map(number => (
+            <option value={number} selected={limit === number}>
+              {number} items per page
+            </option>
+          ))}
+        </select>
+      </div>
+      <button
+        role="submit"
+        onclick={event => {
+          event.preventDefault();
+          updateState({
+            images: null,
+            galleryOrder: event.target.form[0].value,
+            galleryType: event.target.form[1].value,
+            galleryBreed: +event.target.form[2].value,
+            galleryLimit: +event.target.form[3].value,
+          });
+          renderApp();
+        }}
+      >
+        Update items
+      </button>
+    </form>
+  );
 }
 
 function GalleryList() {
@@ -109,12 +159,14 @@ function GalleryList() {
   } = dataStore;
 
   if (imagesLoadingError) {
-    return ErrorAlert(imagesLoadingError);
+    return <ErrorAlert error={imagesLoadingError} />;
   } else if (images) {
-    const items = window.dataStore.images.map(image => GalleryItem(image));
-    return items.length
-      ? `<ul class="content-list gallery-list">${items.join('')}</ul>`
-      : InfoAlert('No item found');
+    const items = window.dataStore.images.map(image => <GalleryItem url={image.url} />);
+    return items.length ? (
+      <ul class="content-list gallery-list">{items}</ul>
+    ) : (
+      <InfoAlert message="No item found" />
+    );
   } else {
     getImagesByQuery({ limit, order, type, breed })
       .then(images => {
@@ -126,11 +178,14 @@ function GalleryList() {
         renderApp();
       });
 
-    return Loader();
+    return <Loader />;
   }
 }
 
 function GalleryItem({ url }) {
-  return `
-    <li class="content-item">${ContentItem(url)}</li>`;
+  return (
+    <li class="content-item">
+      <ContentItem url={url} />
+    </li>
+  );
 }
