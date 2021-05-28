@@ -5,32 +5,45 @@ import { createElement } from '../framework/element';
 import backImage from '../../assets/images/back.png';
 import { ErrorAlert, Loader, InfoAlert } from '../components/loading';
 import { ContentItem } from './content';
-import renderApp from '../framework/render';
-import updateState from '../framework/update';
 import { getBreedsBySearch } from '../data/breedsApi';
+import { useState } from '../framework';
+import { useEffect } from '../framework/hooks';
 
-export function Search() {
+export function Search({
+  search,
+  searchTimer,
+  searchTimeoutPassed,
+  afterUserInput,
+  setContent,
+  setSearchTimer,
+  setSearchTimeoutPassed,
+  setAfterUserInput,
+}) {
   return (
     <div class="search content">
-      <SearchHeader />
-      <SearchBody />
+      <SearchHeader setContent={setContent} />
+      <SearchBody
+        search={search}
+        searchTimer={searchTimer}
+        searchTimeoutPassed={searchTimeoutPassed}
+        afterUserInput={afterUserInput}
+        setSearchTimer={setSearchTimer}
+        setSearchTimeoutPassed={setSearchTimeoutPassed}
+        setAfterUserInput={setAfterUserInput}
+      />
     </div>
   );
 }
 
-function SearchHeader() {
+function SearchHeader({ setContent }) {
   return (
     <header class="content-header search-header">
-      <a
-        class="content-header__label content-header__back-label"
-        data-content="banner"
-        onclick={() => {
-          updateState({ ...window.initialDataStore, content: 'banner' });
-          renderApp();
-        }}
+      <Link
+        classes="content-header__label content-header__back-label"
+        onClick={() => setContent('banner')}
       >
         <img src={backImage} />
-      </a>
+      </Link>
       <a class="content-header__label content-header__name-label content-header__current-label">
         search
       </a>
@@ -38,54 +51,74 @@ function SearchHeader() {
   );
 }
 
-function SearchBody() {
-  if (!dataStore.search) {
+function SearchBody({
+  search,
+  searchTimer,
+  searchTimeoutPassed,
+  setSearchTimer,
+  afterUserInput,
+  setSearchTimeoutPassed,
+  setAfterUserInput,
+}) {
+  const [searchResults, setSearchResults] = useState([]);
+
+  useEffect(() => {
+    if (afterUserInput) {
+      // ensure start searching only when user input stopped
+      clearTimeout(searchTimer);
+      const timer = setTimeout(setSearchTimeoutPassed, 1000, true);
+
+      setAfterUserInput(false, false);
+      setSearchTimer(timer, false, false);
+      setSearchResults(null, false);
+    }
+  }, [search]);
+
+  if (!search) {
     return <InfoAlert message="Please enter search query" />;
-  } else if (!dataStore.searchTimeoutPassed) {
-    // ensure sending request only when user input stopped
-    clearTimeout(dataStore.searchTimer);
-
-    dataStore.searchTimer = setTimeout(() => {
-      updateState({ searchTimeoutPassed: true });
-      renderApp();
-    }, 1000);
-
+  } else if (!searchTimeoutPassed) {
     return <InfoAlert message="Entering search query.." />;
-  } else {
-    return (
-      <div class="content-body search-body">
-        <SearchList />
-      </div>
-    );
   }
+  return (
+    <div class="content-body search-body">
+      <SearchList
+        search={search}
+        searchResults={searchResults}
+        setSearchResults={setSearchResults}
+      />
+    </div>
+  );
 }
 
-function SearchList() {
-  if (dataStore.searchResultsLoadingError) {
-    return <ErrorAlert error={dataStore.searchResultsLoadingError} />;
-  } else if (dataStore.searchResults) {
-    const items = dataStore.searchResults.map(result => (
-      <SearchItem url={result.url} name={result.name} />
-    ));
+function SearchList({ search, searchResults, setSearchResults }) {
+  const [loadingError, setLoadingError] = useState('');
 
-    return items.length ? (
-      <ul class="content-list search-list">{items}</ul>
-    ) : (
-      <InfoAlert message="No item found" />
-    );
-  } else {
-    getBreedsBySearch(dataStore.search)
+  useEffect(() => {
+    getBreedsBySearch(search)
       .then(breeds => {
-        updateState({ searchResults: breeds });
-        renderApp();
+        setSearchResults(breeds);
+        setLoadingError('');
       })
       .catch(({ message }) => {
-        updateState({ searchResultsLoadingError: message });
-        renderApp();
+        setSearchResults(null);
+        setLoadingError(message);
       });
+  }, [search]);
 
-    return <Loader />;
+  if (loadingError) {
+    return <ErrorAlert error={loadingError} />;
+  } else if (searchResults && !searchResults.length) {
+    return <InfoAlert message="No item found" />;
+  } else if (searchResults && searchResults.length) {
+    return (
+      <ul class="content-list search-list">
+        {searchResults.map(result => (
+          <SearchItem url={result.url} name={result.name} />
+        ))}
+      </ul>
+    );
   }
+  return <Loader />;
 }
 
 function SearchItem({ url, name }) {

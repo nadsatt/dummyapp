@@ -1,13 +1,26 @@
 /** @jsx createElement */
 /** @jsxFrag createFragment */
-import { createElement } from '../framework/element';
+import { createElement } from './element';
+import { current } from './hooks';
 
-let Component, Target;
+/**
+ * Renders a component and attaches it to the target dom element
+ * @param Component - funnction
+ * @param target - dom element to attach component to
+ */
 
-export default function renderApp(componentFunction = null, targetElement = null) {
-  if (componentFunction) Component = componentFunction;
-  if (targetElement) Target = targetElement;
+let timer;
 
-  Target.innerHTML = '';
-  Target.appendChild(<Component />);
+export function render(Component, target) {
+  function workLoop() {
+    if (current.shouldReRender) {
+      current.shouldReRender = false;
+      target.replaceChildren(<Component />);
+    }
+
+    cancelAnimationFrame(timer);
+    timer = requestAnimationFrame(workLoop);
+  }
+
+  timer = requestAnimationFrame(workLoop);
 }

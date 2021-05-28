@@ -3,9 +3,9 @@
 /** @jsxFrag createFragment */
 import { createElement } from '../../framework/element';
 
-export default function Link({ classes, onClickCB = null }, children) {
+export default function Link({ classes, onClick = null }, children) {
   return (
-    <a class={classes} onclick={onClickCB}>
+    <a class={classes} onclick={onClick}>
       {children}
     </a>
   );

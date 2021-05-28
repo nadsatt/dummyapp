@@ -9,11 +9,14 @@ import { BreedDetails } from '../components/breed-details';
 import { Search } from '../components/search';
 import { Banner } from '../components/banner';
 import { icons } from '../../assets/data/icons';
-import renderApp from '../framework/render';
-import updateState from '../framework/update';
+import { useState } from '../framework';
 
-export function ContentWrapper() {
-  const { content } = dataStore;
+export function ContentWrapper({ content, setContent }) {
+  const [selectedBreed, setSelectedBreed] = useState(null);
+  const [afterUserInput, setAfterUserInput] = useState(false);
+  const [search, setSearch] = useState('');
+  const [searchTimer, setSearchTimer] = useState(null);
+  const [searchTimeoutPassed, setSearchTimeoutPassed] = useState(true);
 
   if (content === 'banner') {
     return (
@@ -24,28 +27,49 @@ export function ContentWrapper() {
   } else
     return (
       <section class="content-wrapper">
-        <SecondaryMenu />
+        <SecondaryMenu
+          content={content}
+          search={search}
+          setContent={setContent}
+          setSearch={setSearch}
+          setSearchTimeoutPassed={setSearchTimeoutPassed}
+          setAfterUserInput={setAfterUserInput}
+        />
         {content === 'voting' ? (
           <Voting />
         ) : content === 'breeds' ? (
-          <Breeds />
+          <Breeds setContent={setContent} setSelectedBreed={setSelectedBreed} />
         ) : content === 'gallery' ? (
-          <Gallery />
+          <Gallery setContent={setContent} />
         ) : content === 'breed-details' ? (
-          <BreedDetails />
+          <BreedDetails selectedBreed={selectedBreed} setContent={setContent} />
         ) : (
-          <Search />
+          <Search
+            search={search}
+            searchTimer={searchTimer}
+            searchTimeoutPassed={searchTimeoutPassed}
+            afterUserInput={afterUserInput}
+            setContent={setContent}
+            setSearchTimer={setSearchTimer}
+            setSearchTimeoutPassed={setSearchTimeoutPassed}
+            setAfterUserInput={setAfterUserInput}
+          />
         )}
       </section>
     );
 }
 
-function SecondaryMenu() {
-  const { content, search } = dataStore;
-
+function SecondaryMenu({
+  content,
+  search,
+  setContent,
+  setSearch,
+  setSearchTimeoutPassed,
+  setAfterUserInput,
+}) {
+  // save entered value & cursor position after search input rerendering
   if (content === 'search') {
     setTimeout(() => {
-      // save entered value & cursor position after search input rerendering
       const input = document.getElementById('search-control');
       input.value = search;
       input.selectionStart = search.length;
@@ -60,17 +84,11 @@ function SecondaryMenu() {
         class="form-control"
         id="search-control"
         placeholder="Search for breeds"
-        onclick={() => {
-          updateState({ content: 'search' });
-          renderApp();
-        }}
+        onclick={() => setContent('search')}
         oninput={event => {
-          updateState({
-            search: event.target.value,
-            searchTimeoutPassed: false,
-            searchResults: null,
-          });
-          renderApp();
+          setAfterUserInput(true);
+          setSearchTimeoutPassed(false);
+          setSearch(event.target.value);
         }}
         type="text"
       />
