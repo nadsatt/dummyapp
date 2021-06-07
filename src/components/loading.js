@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /** @jsx createElement */
 /** @jsxFrag createFragment */
-import { createElement } from '../framework/element';
+import { createElement } from '../framework';
 
 export function Loader() {
   return (

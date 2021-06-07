@@ -1,18 +1,19 @@
 /** @jsx createElement */
 /** @jsxFrag createFragment */
-import { createElement, createFragment } from '../framework/element';
+import { createElement, createFragment, useState } from '../framework';
+import { AppContext } from '../context';
 
-import { Home } from '../components/home';
-import { ContentWrapper } from '../components/content';
-import { useState } from '../framework';
+import { Home, ContentWrapper } from '../components';
 
 export function App() {
   const [content, setContent] = useState('banner');
 
   return (
     <>
-      <Home content={content} setContent={setContent} />
-      <ContentWrapper content={content} setContent={setContent} />
+      <AppContext.Provider value={content}>
+        <Home setContent={setContent} />
+        <ContentWrapper setContent={setContent} />
+      </AppContext.Provider>
     </>
   );
 }

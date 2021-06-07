@@ -1,13 +1,13 @@
 /** @jsx createElement */
 /** @jsxFrag createFragment */
 import { createElement } from '../framework/element';
+import { useAppContext } from '../context';
 
-import votingImage from '../../assets/images/voting.png';
 import breedsImage from '../../assets/images/breeds.png';
 import galleryImage from '../../assets/images/gallery.png';
 import logoImage from '../../assets/images/logo.png';
 
-export function Home({ content, setContent }) {
+export function Home({ setContent }) {
   return (
     <section class="home">
       <img src={logoImage} />
@@ -15,14 +15,13 @@ export function Home({ content, setContent }) {
         <h3 class="greeting__heading">Lovely dog app</h3>
         <p class="greeting__text">Designed by MacPaw company</p>
       </div>
-      <PrimaryMenu content={content} setContent={setContent} />
+      <PrimaryMenu setContent={setContent} />
     </section>
   );
 }
 
-function PrimaryMenu({ content, setContent }) {
+function PrimaryMenu({ setContent }) {
   const items = [
-    { name: 'voting', image: votingImage },
     { name: 'breeds', image: breedsImage },
     { name: 'gallery', image: galleryImage },
   ];
@@ -32,14 +31,16 @@ function PrimaryMenu({ content, setContent }) {
       <p class="primary-menu-text">Lets start using The Dog Api</p>
       <ul class="primary-menu-list">
         {items.map(({ name, image }) => (
-          <PrimaryMenuItem name={name} image={image} content={content} setContent={setContent} />
+          <PrimaryMenuItem name={name} image={image} setContent={setContent} />
         ))}
       </ul>
     </nav>
   );
 }
 
-function PrimaryMenuItem({ name, image, content, setContent }) {
+function PrimaryMenuItem({ name, image, setContent }) {
+  const content = useAppContext();
+
   return (
     <li
       class={'primary-menu-item' + (content === name ? ' primary-menu-item--active' : '')}

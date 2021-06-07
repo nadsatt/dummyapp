@@ -1,21 +1,18 @@
 /* eslint-disable prettier/prettier */
 /** @jsx createElement */
 /** @jsxFrag createFragment */
-import { createElement } from '../framework/element';
+import { createElement, useState, useEffect } from '../framework';
 
 import backImage from '../../assets/images/back.png';
-import { ErrorAlert, Loader } from '../components/loading';
-import Link from '../components/Link/link';
-import { ContentItem } from './content';
-import { getBreeds } from './../data/breedsApi';
-import { useState } from '../framework';
-import { useEffect } from '../framework/hooks';
+import { BreedItem, ErrorAlert, Loader } from '../components';
+import { getBreeds } from '../data';
+import { breedToBreedDetails } from '../mappers';
 
-export function Breeds({ setContent, setSelectedBreed }) {
+export function Breeds({ setContent, setCurrentBreed }) {
   return (
     <div class="content breeds">
       <BreedsHeader setContent={setContent} />
-      <BreedsBody setContent={setContent} setSelectedBreed={setSelectedBreed} />
+      <BreedsBody setContent={setContent} setCurrentBreed={setCurrentBreed} />
     </div>
   );
 }
@@ -23,12 +20,12 @@ export function Breeds({ setContent, setSelectedBreed }) {
 function BreedsHeader({ setContent }) {
   return (
     <header class="content-header breeds-header">
-      <Link
-        classes="content-header__label content-header__back-label"
-        onClick={() => setContent('banner')}
+      <a
+        class="content-header__label content-header__back-label"
+        onclick={() => setContent('banner')}
       >
         <img src={backImage} />
-      </Link>
+      </a>
       <a class="content-header__label content-header__name-label content-header__current-label">
         breeds
       </a>
@@ -36,7 +33,7 @@ function BreedsHeader({ setContent }) {
   );
 }
 
-function BreedsBody({ setContent, setSelectedBreed }) {
+function BreedsBody({ setContent, setCurrentBreed }) {
   const [breeds, setBreeds] = useState([]);
   const [loadingError, setLoadingError] = useState('');
   const [breed, setBreed] = useState(0);
@@ -75,7 +72,7 @@ function BreedsBody({ setContent, setSelectedBreed }) {
           limit={limit}
           order={order}
           setContent={setContent}
-          setSelectedBreed={setSelectedBreed}
+          setCurrentBreed={setCurrentBreed}
         />
       </div>
     );
@@ -117,7 +114,7 @@ function BreedsForm({ breeds, breed, limit, order, setBreed, setLimit, setOrder 
   );
 }
 
-function BreedsList({ breeds, breed, limit, order, setContent, setSelectedBreed }) {
+function BreedsList({ breeds, breed, limit, order, setContent, setCurrentBreed }) {
   return (
     <ul class="content-list breeds-list">
       {breeds
@@ -128,30 +125,20 @@ function BreedsList({ breeds, breed, limit, order, setContent, setSelectedBreed 
         .sort(({ name: prev }, { name: next }) =>
           order === 'asc' ? prev.localeCompare(next) : next.localeCompare(prev),
         )
-        .map(({ id, name, image: { url } }) => (
-          <BreedsItem
-            id={id}
-            name={name}
-            url={url}
-            breeds={breeds}
-            setContent={setContent}
-            setSelectedBreed={setSelectedBreed}
-          />
+        .map(breed => (
+          <BreedListItem breed={breed} setContent={setContent} setCurrentBreed={setCurrentBreed} />
         ))}
     </ul>
   );
 }
 
-function BreedsItem({ id, name, url, breeds, setContent, setSelectedBreed }) {
-  return (
-    <li
-      class="content-item"
-      onclick={() => {
-        setContent('breed-details');
-        setSelectedBreed(breeds.find(breed => breed.id === id));
-      }}
-    >
-      <ContentItem url={url} name={name} />
-    </li>
-  );
+function BreedListItem({ breed, setContent, setCurrentBreed }) {
+  const breedDetails = breedToBreedDetails(breed);
+
+  const onClick = () => {
+    setContent('breed-details');
+    setCurrentBreed({ ...breedDetails, from: 'breeds' });
+  };
+
+  return <BreedItem url={breedDetails.url} name={breedDetails.name} onClick={onClick} />;
 }

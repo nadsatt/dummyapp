@@ -15,6 +15,7 @@ export function createFunctionElement(tag, props, children) {
 export function useState(initial) {
   const { wipComponent, hookIndex } = current;
   const oldHook = wipComponent.hooks[hookIndex];
+
   const hook = {
     state: oldHook ? oldHook.state : initial,
     queue: [],
@@ -26,8 +27,8 @@ export function useState(initial) {
     hook.state = typeof action === 'function' ? action(hook.state) : action;
   });
 
-  const setState = (action, rerender) => {
-    current.shouldReRender = rerender !== undefined ? rerender : true;
+  const setState = action => {
+    current.shouldReRender = true;
     hook.queue.push(action);
   };
 
@@ -59,8 +60,10 @@ export function useEffect(effect, deps) {
   window.addEventListener('beforeunload', wipComponent.hooks[hookIndex].unmount);
 }
 
-const hasDepsChanged = (prevDeps, nextDeps) =>
+export const hasDepsChanged = (prevDeps, nextDeps) =>
   !prevDeps ||
   !nextDeps ||
   prevDeps.length !== nextDeps.length ||
   prevDeps.some((dep, index) => dep !== nextDeps[index]);
+
+export const useContext = Context => Context.value;

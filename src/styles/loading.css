@@ -3,6 +3,7 @@
   font-size: 16px;
   line-height: 24px;
   padding: 18px 20px;
+  margin-top: 20px;
 }
 .error-alert {
   background-color: var(--color-light-pink);
@@ -22,6 +23,11 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+.gallery-body .lds-roller {
+  top: 60%;
+}
+
 .lds-roller div {
   animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
   transform-origin: 40px 40px;

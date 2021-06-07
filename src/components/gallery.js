@@ -1,22 +1,18 @@
 /* eslint-disable prettier/prettier */
 /** @jsx createElement */
 /** @jsxFrag createFragment */
-import { createElement } from '../framework/element';
+import { createElement, useState, useEffect } from '../framework';
 
 import backImage from '../../assets/images/back.png';
-import { ErrorAlert, Loader, InfoAlert } from '../components/loading';
-import { ContentItem } from './content';
-import { getBreeds } from '../data/breedsApi';
-import { getImagesByQuery } from '../data/imagesApi';
-import Link from '../components/Link/link';
-import { useState } from '../framework';
-import { useEffect } from '../framework/hooks';
+import { ErrorAlert, Loader, InfoAlert, BreedItem } from '../components';
+import { getBreeds, getImagesByQuery } from '../data';
+import { imageToBreedDetails } from '../mappers';
 
-export function Gallery({ setContent }) {
+export function Gallery({ setContent, setCurrentBreed }) {
   return (
     <div class="gallery content">
       <GalleryHeader setContent={setContent} />
-      <GalleryBody />
+      <GalleryBody setContent={setContent} setCurrentBreed={setCurrentBreed} />
     </div>
   );
 }
@@ -24,25 +20,25 @@ export function Gallery({ setContent }) {
 function GalleryHeader({ setContent }) {
   return (
     <header class="gallery-header content-header">
-      <Link
-        classes="content-header__label content-header__back-label"
-        onClick={() => setContent('banner')}
+      <a
+        class="content-header__label content-header__back-label"
+        onclick={() => setContent('banner')}
       >
         <img src={backImage} />
-      </Link>
-      <Link classes="content-header__label content-header__name-label content-header__current-label">
+      </a>
+      <a class="content-header__label content-header__name-label content-header__current-label">
         gallery
-      </Link>
+      </a>
     </header>
   );
 }
 
-function GalleryBody() {
+function GalleryBody({ setContent, setCurrentBreed }) {
   const [breedNames, setBreedNames] = useState([]);
   const [loadingError, setLoadingError] = useState('');
-  const [breed, setBreed] = useState(0);
-  const [order, setOrder] = useState('asc');
+  const [breed, setBreed] = useState(5);
   const [type, setType] = useState('all');
+  const [order, setOrder] = useState('asc');
   const [limit, setLimit] = useState(5);
   const [images, setImages] = useState(null);
   const [imagesChanged, setImagesChanged] = useState(false);
@@ -67,27 +63,29 @@ function GalleryBody() {
       <div class="content-body gallery-body">
         <GalleryForm
           breedNames={breedNames}
-          breed={breed}
+          limit={limit}
           order={order}
           type={type}
-          limit={limit}
+          breed={breed}
           imagesChanged={imagesChanged}
-          setBreed={setBreed}
+          setLimit={setLimit}
           setOrder={setOrder}
           setType={setType}
-          setLimit={setLimit}
+          setBreed={setBreed}
           setImages={setImages}
           setImagesChanged={setImagesChanged}
         />
         <GalleryList
           images={images}
           imagesChanged={imagesChanged}
-          breed={breed}
+          limit={limit}
           order={order}
           type={type}
-          limit={limit}
+          breed={breed}
           setImages={setImages}
           setImagesChanged={setImagesChanged}
+          setContent={setContent}
+          setCurrentBreed={setCurrentBreed}
         />
       </div>
     );
@@ -98,15 +96,15 @@ function GalleryBody() {
 
 function GalleryForm({
   breedNames,
-  breed,
+  limit,
   order,
   type,
-  limit,
+  breed,
   imagesChanged,
-  setBreed,
+  setLimit,
   setOrder,
   setType,
-  setLimit,
+  setBreed,
   setImages,
   setImagesChanged,
 }) {
@@ -184,12 +182,13 @@ function GalleryForm({
 function GalleryList({
   images,
   imagesChanged,
-  breed,
+  limit,
   order,
   type,
-  limit,
+  breed,
   setImages,
-  setImagesChanged,
+  setContent,
+  setCurrentBreed,
 }) {
   const [loadingError, setLoadingError] = useState('');
 
@@ -212,8 +211,12 @@ function GalleryList({
   } else if (images && images.length) {
     return (
       <ul class="content-list gallery-list">
-        {images.map(({ url }) => (
-          <GalleryItem url={url} />
+        {images.map(image => (
+          <GalleryListItem
+            image={image}
+            setContent={setContent}
+            setCurrentBreed={setCurrentBreed}
+          />
         ))}
       </ul>
     );
@@ -222,10 +225,13 @@ function GalleryList({
   }
 }
 
-function GalleryItem({ url }) {
-  return (
-    <li class="content-item">
-      <ContentItem url={url} />
-    </li>
-  );
+function GalleryListItem({ image, setContent, setCurrentBreed }) {
+  const breedDetails = imageToBreedDetails(image);
+
+  const onClick = () => {
+    setContent('breed-details');
+    setCurrentBreed({ ...breedDetails, from: 'gallery' });
+  };
+
+  return <BreedItem url={breedDetails.url} name={breedDetails.name} onClick={onClick} />;
 }

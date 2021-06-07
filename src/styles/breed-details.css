@@ -55,6 +55,7 @@
 }
 .breed-details-body__info-item span:last-of-type {
   color: var(--color-dark-gray);
+  margin-left: 5px;
 }
 .breed-details-body__temperament span:last-of-type {
   display: block;

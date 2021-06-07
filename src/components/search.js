@@ -1,35 +1,20 @@
 /** @jsx createElement */
 /** @jsxFrag createFragment */
-import { createElement } from '../framework/element';
+import { createElement, useState, useEffect } from '../framework';
 
 import backImage from '../../assets/images/back.png';
-import { ErrorAlert, Loader, InfoAlert } from '../components/loading';
-import { ContentItem } from './content';
-import { getBreedsBySearch } from '../data/breedsApi';
-import { useState } from '../framework';
-import { useEffect } from '../framework/hooks';
+import { ErrorAlert, Loader, InfoAlert, BreedItem } from '../components';
+import { getBreedsBySearch } from '../data';
+import { searchResultToBreedDetails } from '../mappers';
 
-export function Search({
-  search,
-  searchTimer,
-  searchTimeoutPassed,
-  afterUserInput,
-  setContent,
-  setSearchTimer,
-  setSearchTimeoutPassed,
-  setAfterUserInput,
-}) {
+export function Search({ searchValue, setContent, setCurrentBreed }) {
   return (
     <div class="search content">
       <SearchHeader setContent={setContent} />
       <SearchBody
-        search={search}
-        searchTimer={searchTimer}
-        searchTimeoutPassed={searchTimeoutPassed}
-        afterUserInput={afterUserInput}
-        setSearchTimer={setSearchTimer}
-        setSearchTimeoutPassed={setSearchTimeoutPassed}
-        setAfterUserInput={setAfterUserInput}
+        searchValue={searchValue}
+        setContent={setContent}
+        setCurrentBreed={setCurrentBreed}
       />
     </div>
   );
@@ -38,12 +23,12 @@ export function Search({
 function SearchHeader({ setContent }) {
   return (
     <header class="content-header search-header">
-      <Link
-        classes="content-header__label content-header__back-label"
-        onClick={() => setContent('banner')}
+      <a
+        class="content-header__label content-header__back-label"
+        onclick={() => setContent('banner')}
       >
         <img src={backImage} />
-      </Link>
+      </a>
       <a class="content-header__label content-header__name-label content-header__current-label">
         search
       </a>
@@ -51,59 +36,55 @@ function SearchHeader({ setContent }) {
   );
 }
 
-function SearchBody({
-  search,
-  searchTimer,
-  searchTimeoutPassed,
-  setSearchTimer,
-  afterUserInput,
-  setSearchTimeoutPassed,
-  setAfterUserInput,
-}) {
-  const [searchResults, setSearchResults] = useState([]);
+function SearchBody({ searchValue, setContent, setCurrentBreed }) {
+  const [searchTimer, setSearchTimer] = useState(null);
+  const [searchTimerPassed, setSearchTimerPassed] = useState(true);
 
   useEffect(() => {
-    if (afterUserInput) {
-      // ensure start searching only when user input stopped
-      clearTimeout(searchTimer);
-      const timer = setTimeout(setSearchTimeoutPassed, 1000, true);
+    // delay before search
+    clearTimeout(searchTimer);
+    const timer = setTimeout(() => {
+      setSearchTimerPassed(true);
+    }, 1000);
 
-      setAfterUserInput(false, false);
-      setSearchTimer(timer, false, false);
-      setSearchResults(null, false);
-    }
-  }, [search]);
+    setSearchTimer(timer);
+    setSearchTimerPassed(false);
+  }, [searchValue]);
 
-  if (!search) {
+  if (!searchValue) {
     return <InfoAlert message="Please enter search query" />;
-  } else if (!searchTimeoutPassed) {
+  } else if (!searchTimerPassed) {
     return <InfoAlert message="Entering search query.." />;
   }
   return (
     <div class="content-body search-body">
       <SearchList
-        search={search}
-        searchResults={searchResults}
-        setSearchResults={setSearchResults}
+        searchValue={searchValue}
+        searchTimerPassed={searchTimerPassed}
+        setContent={setContent}
+        setCurrentBreed={setCurrentBreed}
       />
     </div>
   );
 }
 
-function SearchList({ search, searchResults, setSearchResults }) {
+function SearchList({ searchValue, searchTimerPassed, setContent, setCurrentBreed }) {
+  const [searchResults, setSearchResults] = useState(null);
   const [loadingError, setLoadingError] = useState('');
 
   useEffect(() => {
-    getBreedsBySearch(search)
-      .then(breeds => {
-        setSearchResults(breeds);
-        setLoadingError('');
-      })
-      .catch(({ message }) => {
-        setSearchResults(null);
-        setLoadingError(message);
-      });
-  }, [search]);
+    if (searchTimerPassed) {
+      getBreedsBySearch(searchValue)
+        .then(breeds => {
+          setSearchResults(breeds);
+          setLoadingError('');
+        })
+        .catch(({ message }) => {
+          setSearchResults(null);
+          setLoadingError(message);
+        });
+    }
+  }, [searchTimerPassed]);
 
   if (loadingError) {
     return <ErrorAlert error={loadingError} />;
@@ -113,7 +94,11 @@ function SearchList({ search, searchResults, setSearchResults }) {
     return (
       <ul class="content-list search-list">
         {searchResults.map(result => (
-          <SearchItem url={result.url} name={result.name} />
+          <SearchListItem
+            result={result}
+            setContent={setContent}
+            setCurrentBreed={setCurrentBreed}
+          />
         ))}
       </ul>
     );
@@ -121,10 +106,13 @@ function SearchList({ search, searchResults, setSearchResults }) {
   return <Loader />;
 }
 
-function SearchItem({ url, name }) {
-  return (
-    <li class="content-item">
-      <ContentItem url={url} name={name} />
-    </li>
-  );
+function SearchListItem({ result, setContent, setCurrentBreed }) {
+  const breedDetails = searchResultToBreedDetails(result);
+
+  const onClick = () => {
+    setContent('breed-details');
+    setCurrentBreed({ ...breedDetails, from: 'search' });
+  };
+
+  return <BreedItem url={breedDetails.url} name={breedDetails.name} onClick={onClick} />;
 }

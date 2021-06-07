@@ -48,10 +48,6 @@
   justify-content: center;
   align-items: center;
 }
-.primary-menu-item[data-content='voting'] .primary-menu-item__image-wrapper {
-  background-color: var(--color-purple);
-  border-color: var(--color-light-purple);
-}
 .primary-menu-item[data-content='breeds'] .primary-menu-item__image-wrapper {
   background-color: var(--color-green);
   border-color: var(--color-light-green);
@@ -59,9 +55,6 @@
 .primary-menu-item[data-content='gallery'] .primary-menu-item__image-wrapper {
   background-color: var(--color-orange);
   border-color: var(--color-light-orange);
-}
-.primary-menu-item[data-content='voting'] .primary-menu-item__image {
-  width: 100px;
 }
 .primary-menu-item[data-content='breeds'] .primary-menu-item__image {
   width: 117px;
