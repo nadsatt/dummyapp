@@ -1,11 +1,8 @@
-/* eslint-disable prettier/prettier */
-/** @jsx createElement */
-/** @jsxFrag createFragment */
-import { createElement } from '../framework';
+import React from 'react';
 
 export function Loader() {
   return (
-    <div class="lds-roller">
+    <div className="lds-roller">
       <div></div>
       <div></div>
       <div></div>
@@ -19,9 +16,9 @@ export function Loader() {
 }
 
 export function ErrorAlert({ error }) {
-  return <p class="alert error-alert">{error}</p>;
+  return <p className="alert error-alert">{error}</p>;
 }
 
 export function InfoAlert({ message }) {
-  return <div class="alert info-alert">{message}</div>;
+  return <div className="alert info-alert">{message}</div>;
 }

@@ -1,14 +1,11 @@
-/* eslint-disable prettier/prettier */
-/** @jsx createElement */
-/** @jsxFrag createFragment */
-import { createElement } from '../framework';
+import React from 'react';
 
 export function BreedItem({ url, name, onClick }) {
   return (
-    <li class="breed-item" onclick={onClick}>
-      <img class="breed-item__image" src={url} />
-      <div class="breed-item__overlap breed-item__name-overlap">
-        <h4 class="breed-item__overlap-heading breed-item__name-overlap-heading">{name}</h4>
+    <li className="breed-item" onClick={onClick}>
+      <img className="breed-item__image" src={url} />
+      <div className="breed-item__overlap breed-item__name-overlap">
+        <h4 className="breed-item__overlap-heading breed-item__name-overlap-heading">{name}</h4>
       </div>
     </li>
   );

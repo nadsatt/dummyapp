@@ -1,18 +1,20 @@
-/** @jsx createElement */
-/** @jsxFrag createFragment */
-import { createElement, createFragment, useState } from '../framework';
-import { AppContext } from '../context';
+import React from 'react';
+import { useState } from 'react';
 
+import { AppContext, SearchValueContext } from '../context';
 import { Home, ContentWrapper } from '../components';
 
 export function App() {
   const [content, setContent] = useState('banner');
+  const [searchValue, setSearchValue] = useState('');
 
   return (
     <>
-      <AppContext.Provider value={content}>
-        <Home setContent={setContent} />
-        <ContentWrapper setContent={setContent} />
+      <AppContext.Provider value={{ content, setContent }}>
+        <SearchValueContext.Provider value={{ searchValue, setSearchValue }}>
+          <Home />
+          <ContentWrapper />
+        </SearchValueContext.Provider>
       </AppContext.Provider>
     </>
   );

@@ -1,39 +1,43 @@
-/* eslint-disable prettier/prettier */
-/** @jsx createElement */
-/** @jsxFrag createFragment */
-import { createElement, useState, useEffect } from '../framework';
+import React from 'react';
+import { useState, useEffect } from 'react';
 
-import backImage from '../../assets/images/back.png';
 import { ErrorAlert, Loader, InfoAlert, BreedItem } from '../components';
+import { AppContext, CurrentBreedContext } from '../context';
 import { getBreeds, getImagesByQuery } from '../data';
 import { imageToBreedDetails } from '../mappers';
+import backImage from '../../assets/images/back.png';
+import { BREED_NAMES_COUNT } from '../constants';
 
-export function Gallery({ setContent, setCurrentBreed }) {
+export function Gallery() {
   return (
-    <div class="gallery content">
-      <GalleryHeader setContent={setContent} />
-      <GalleryBody setContent={setContent} setCurrentBreed={setCurrentBreed} />
+    <div className="gallery content">
+      <GalleryHeader />
+      <GalleryBody />
     </div>
   );
 }
 
-function GalleryHeader({ setContent }) {
+function GalleryHeader() {
   return (
-    <header class="gallery-header content-header">
-      <a
-        class="content-header__label content-header__back-label"
-        onclick={() => setContent('banner')}
-      >
-        <img src={backImage} />
-      </a>
-      <a class="content-header__label content-header__name-label content-header__current-label">
-        gallery
-      </a>
-    </header>
+    <AppContext.Consumer>
+      {({ setContent }) => (
+        <header className="gallery-header content-header">
+          <a
+            className="content-header__label content-header__back-label"
+            onClick={() => setContent('banner')}
+          >
+            <img src={backImage} />
+          </a>
+          <a className="content-header__label content-header__name-label content-header__current-label">
+            gallery
+          </a>
+        </header>
+      )}
+    </AppContext.Consumer>
   );
 }
 
-function GalleryBody({ setContent, setCurrentBreed }) {
+function GalleryBody() {
   const [breedNames, setBreedNames] = useState([]);
   const [loadingError, setLoadingError] = useState('');
   const [breed, setBreed] = useState(5);
@@ -44,7 +48,7 @@ function GalleryBody({ setContent, setCurrentBreed }) {
   const [imagesChanged, setImagesChanged] = useState(false);
 
   useEffect(() => {
-    getBreeds(100)
+    getBreeds(BREED_NAMES_COUNT)
       .then(breeds => {
         const names = breeds.map(({ name, id }) => [name, id]);
         setBreedNames(names);
@@ -60,7 +64,7 @@ function GalleryBody({ setContent, setCurrentBreed }) {
     return <ErrorAlert error={loadingError} />;
   } else if (breedNames && breedNames.length) {
     return (
-      <div class="content-body gallery-body">
+      <div className="content-body gallery-body">
         <GalleryForm
           breedNames={breedNames}
           limit={limit}
@@ -84,8 +88,6 @@ function GalleryBody({ setContent, setCurrentBreed }) {
           breed={breed}
           setImages={setImages}
           setImagesChanged={setImagesChanged}
-          setContent={setContent}
-          setCurrentBreed={setCurrentBreed}
         />
       </div>
     );
@@ -109,53 +111,53 @@ function GalleryForm({
   setImagesChanged,
 }) {
   return (
-    <form class="content-form gallery-form">
-      <div class="form-control">
-        <label>Order</label>
-        <select class="form-control" name="galleryOrder">
-          <option value="rand" selected={order === 'rand'}>
+    <form className="content-form gallery-form">
+      <div className="form-control">
+        <label htmlFor="galleryOrder">Order</label>
+        <select id="galleryOrder" className="form-control" name="galleryOrder">
+          <option value="rand" defaultValue={order === 'rand'}>
             Random
           </option>
-          <option value="desc" selected={order === 'desc'}>
+          <option value="desc" defaultValue={order === 'desc'}>
             Desc
           </option>
-          <option value="asc" selected={order === 'asc'}>
+          <option value="asc" defaultValue={order === 'asc'}>
             Asc
           </option>
         </select>
       </div>
-      <div class="form-control">
-        <label>Type</label>
-        <select class="form-control" name="galleryType">
-          <option value="all" selected={type === 'all'}>
+      <div className="form-control">
+        <label htmlFor="galleryType">Type</label>
+        <select id="galleryType" className="form-control" name="galleryType">
+          <option value="all" defaultValue={type === 'all'}>
             All
           </option>
-          <option value="static" selected={type === 'static'}>
+          <option value="static" defaultValue={type === 'static'}>
             Static
           </option>
-          <option value="gif" selected={type === 'gif'}>
+          <option value="gif" defaultValue={type === 'gif'}>
             Animated
           </option>
         </select>
       </div>
-      <div class="form-control">
-        <label>Breed</label>
-        <select class="form-control" name="galleryBreed">
-          <option value="0" selected={breed === 0}>
+      <div className="form-control">
+        <label htmlFor="galleryBreed">Breed</label>
+        <select id="galleryBreed" className="form-control" name="galleryBreed">
+          <option value="0" defaultValue={breed === 0}>
             None
           </option>
           {breedNames.map(([name, id]) => (
-            <option value={id} selected={breed === id}>
+            <option key={name} value={id} defaultValue={breed === id}>
               {name}
             </option>
           ))}
         </select>
       </div>
-      <div class="form-control">
-        <label>Limit</label>
-        <select class="form-control" name="galleryLimit">
+      <div className="form-control">
+        <label htmlFor="galleryLimit">Limit</label>
+        <select id="galleryLimit" className="form-control" name="galleryLimit">
           {[5, 10, 15, 20].map(number => (
-            <option value={number} selected={limit === number}>
+            <option key={number} value={number} defaultValue={limit === number}>
               {number} items per page
             </option>
           ))}
@@ -163,7 +165,7 @@ function GalleryForm({
       </div>
       <button
         role="submit"
-        onclick={event => {
+        onClick={event => {
           event.preventDefault();
           setOrder(event.target.form[0].value);
           setType(event.target.form[1].value);
@@ -179,17 +181,7 @@ function GalleryForm({
   );
 }
 
-function GalleryList({
-  images,
-  imagesChanged,
-  limit,
-  order,
-  type,
-  breed,
-  setImages,
-  setContent,
-  setCurrentBreed,
-}) {
+function GalleryList({ images, imagesChanged, limit, order, type, breed, setImages }) {
   const [loadingError, setLoadingError] = useState('');
 
   useEffect(() => {
@@ -210,13 +202,9 @@ function GalleryList({
     return <InfoAlert message="No item found" />;
   } else if (images && images.length) {
     return (
-      <ul class="content-list gallery-list">
+      <ul className="content-list gallery-list">
         {images.map(image => (
-          <GalleryListItem
-            image={image}
-            setContent={setContent}
-            setCurrentBreed={setCurrentBreed}
-          />
+          <GalleryListItem key={image.url} image={image} />
         ))}
       </ul>
     );
@@ -225,13 +213,25 @@ function GalleryList({
   }
 }
 
-function GalleryListItem({ image, setContent, setCurrentBreed }) {
+function GalleryListItem({ image }) {
   const breedDetails = imageToBreedDetails(image);
 
-  const onClick = () => {
-    setContent('breed-details');
-    setCurrentBreed({ ...breedDetails, from: 'gallery' });
-  };
-
-  return <BreedItem url={breedDetails.url} name={breedDetails.name} onClick={onClick} />;
+  return (
+    <AppContext.Consumer>
+      {({ setContent }) => (
+        <CurrentBreedContext.Consumer>
+          {({ setCurrentBreed }) => (
+            <BreedItem
+              url={breedDetails.url}
+              name={breedDetails.name}
+              onClick={() => {
+                setContent('breed-details');
+                setCurrentBreed({ ...breedDetails, from: 'gallery' });
+              }}
+            />
+          )}
+        </CurrentBreedContext.Consumer>
+      )}
+    </AppContext.Consumer>
+  );
 }

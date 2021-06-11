@@ -1,54 +1,63 @@
-/** @jsx createElement */
-/** @jsxFrag createFragment */
-import { createElement, useState, useEffect } from '../framework';
+import React from 'react';
+import { useState, useEffect } from 'react';
 
-import backImage from '../../assets/images/back.png';
 import { ErrorAlert, Loader, InfoAlert, BreedItem } from '../components';
+import {
+  AppContext,
+  CurrentBreedContext,
+  useSearchTimerPassedContext,
+  useSearchValueContext,
+} from '../context';
 import { getBreedsBySearch } from '../data';
 import { searchResultToBreedDetails } from '../mappers';
+import backImage from '../../assets/images/back.png';
 
-export function Search({ searchValue, setContent, setCurrentBreed }) {
+export function Search() {
   return (
-    <div class="search content">
-      <SearchHeader setContent={setContent} />
-      <SearchBody
-        searchValue={searchValue}
-        setContent={setContent}
-        setCurrentBreed={setCurrentBreed}
-      />
+    <div className="search content">
+      <SearchHeader />
+      <SearchBody />
     </div>
   );
 }
 
-function SearchHeader({ setContent }) {
+function SearchHeader() {
   return (
-    <header class="content-header search-header">
-      <a
-        class="content-header__label content-header__back-label"
-        onclick={() => setContent('banner')}
-      >
-        <img src={backImage} />
-      </a>
-      <a class="content-header__label content-header__name-label content-header__current-label">
-        search
-      </a>
-    </header>
+    <AppContext.Consumer>
+      {({ setContent }) => (
+        <header className="content-header search-header">
+          <a
+            className="content-header__label content-header__back-label"
+            onClick={() => setContent('banner')}
+          >
+            <img src={backImage} />
+          </a>
+          <a className="content-header__label content-header__name-label content-header__current-label">
+            search
+          </a>
+        </header>
+      )}
+    </AppContext.Consumer>
   );
 }
 
-function SearchBody({ searchValue, setContent, setCurrentBreed }) {
+function SearchBody() {
+  const { searchTimerPassed, setSearchTimerPassed } = useSearchTimerPassedContext();
+  const { searchValue } = useSearchValueContext();
+
   const [searchTimer, setSearchTimer] = useState(null);
-  const [searchTimerPassed, setSearchTimerPassed] = useState(true);
 
   useEffect(() => {
-    // delay before search
-    clearTimeout(searchTimer);
-    const timer = setTimeout(() => {
-      setSearchTimerPassed(true);
-    }, 1000);
+    if (!searchTimerPassed) {
+      // delay before search
+      clearTimeout(searchTimer);
+      const timer = setTimeout(() => {
+        setSearchTimerPassed(true);
+      }, 1000);
 
-    setSearchTimer(timer);
-    setSearchTimerPassed(false);
+      setSearchTimer(timer);
+      setSearchTimerPassed(false);
+    }
   }, [searchValue]);
 
   if (!searchValue) {
@@ -57,18 +66,16 @@ function SearchBody({ searchValue, setContent, setCurrentBreed }) {
     return <InfoAlert message="Entering search query.." />;
   }
   return (
-    <div class="content-body search-body">
-      <SearchList
-        searchValue={searchValue}
-        searchTimerPassed={searchTimerPassed}
-        setContent={setContent}
-        setCurrentBreed={setCurrentBreed}
-      />
+    <div className="content-body search-body">
+      <SearchList />
     </div>
   );
 }
 
-function SearchList({ searchValue, searchTimerPassed, setContent, setCurrentBreed }) {
+function SearchList() {
+  const { searchValue } = useSearchValueContext();
+  const { searchTimerPassed } = useSearchTimerPassedContext();
+
   const [searchResults, setSearchResults] = useState(null);
   const [loadingError, setLoadingError] = useState('');
 
@@ -92,13 +99,9 @@ function SearchList({ searchValue, searchTimerPassed, setContent, setCurrentBree
     return <InfoAlert message="No item found" />;
   } else if (searchResults && searchResults.length) {
     return (
-      <ul class="content-list search-list">
+      <ul className="content-list search-list">
         {searchResults.map(result => (
-          <SearchListItem
-            result={result}
-            setContent={setContent}
-            setCurrentBreed={setCurrentBreed}
-          />
+          <SearchListItem key={result.id} result={result} />
         ))}
       </ul>
     );
@@ -106,13 +109,25 @@ function SearchList({ searchValue, searchTimerPassed, setContent, setCurrentBree
   return <Loader />;
 }
 
-function SearchListItem({ result, setContent, setCurrentBreed }) {
+function SearchListItem({ result }) {
   const breedDetails = searchResultToBreedDetails(result);
 
-  const onClick = () => {
-    setContent('breed-details');
-    setCurrentBreed({ ...breedDetails, from: 'search' });
-  };
-
-  return <BreedItem url={breedDetails.url} name={breedDetails.name} onClick={onClick} />;
+  return (
+    <AppContext.Consumer>
+      {({ setContent }) => (
+        <CurrentBreedContext.Consumer>
+          {({ setCurrentBreed }) => (
+            <BreedItem
+              url={breedDetails.url}
+              name={breedDetails.name}
+              onClick={() => {
+                setContent('breed-details');
+                setCurrentBreed({ ...breedDetails, from: 'search' });
+              }}
+            />
+          )}
+        </CurrentBreedContext.Consumer>
+      )}
+    </AppContext.Consumer>
+  );
 }

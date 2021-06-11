@@ -34,36 +34,13 @@ SessionStorage or LocaleStorage
 - upload img from local storage
 - change theme
 
+#### Implemented features:
+
+- watch dog img list (**galery** page)
+- watch dog breed list (**breeds** page)
+- fetch dog img list by breed, limit, order, type using refresh button ('pre-fetching' filters within **gallery** page)
+- filter loaded dog breed list by breed, limit and sort by order ('after-fetching' filters within **breeds** page)
+- fetch dog img list by search word (**search** page)
+- watch dog info (**breed-details** page)
+
 ![](https://media.istockphoto.com/vectors/cute-jack-russell-terrier-paws-up-over-wall-dog-face-cartoon-vector-vector-id1158317995?k=6&m=1158317995&s=170667a&w=0&h=uySmCgZA_iRsKCgICEibxNIrcdBcTAmr-BXIlEqwtu4=)
-
-<details close>
-<summary>Implementation details</summary>
-<br>
-
-#### main:
-
-- within **Home** page:
-  - display links to **Voting**, **Gallery** pages
-- within **Gallery** page:
-  - display dog img list
-  - display links to **Likes**/**Favourites**/**Dislikes** pages
-  - favourite/unfavourite dog img
-  - filter dog img list by breed, img count, img type
-  - sort dog img list by breed
-  - open **About Dog** page after clicking dog image
-- withing **About Dog** page:
-  - display dog img + info block
-  - display links to **Likes**/**Favourites**/**Dislikes** pages
-- within **Voting** page:
-  - display dog img + voting block + voting history block
-  - display links to **Likes**/**Favourites**/**Dislikes** pages
-  - like, dislike, favourite, unfavourite dog img
-  - get random dog img to vote for
-
-#### additional:
-
-- change theme
-- withing **Gallery** page:
-  - upload local img to gallery
-- withing **Voting**, **Gallery**, **About Dog** page: - display _search by breed_ field (opens search results within **Gallery** page)
-</details>

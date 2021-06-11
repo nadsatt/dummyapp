@@ -1,13 +1,11 @@
-/** @jsx createElement */
-/** @jsxFrag createFragment */
-import { createElement } from '../framework';
+import React from 'react';
 
 import girlImage from '../../assets/images/girl.png';
 
 export function Banner() {
   return (
-    <div class="banner">
-      <img class="banner__image" src={girlImage} />
+    <div className="banner">
+      <img className="banner__image" src={girlImage} />
     </div>
   );
 }
