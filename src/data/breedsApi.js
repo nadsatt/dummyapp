@@ -11,9 +11,9 @@ export function getBreeds(limit) {
 so we after-fetch image urls */
 export function getBreedsBySearch(search) {
   return getData(`${breedsApi}/search?q=${search}`).then(breeds => {
-    return Promise.all(breeds.map(breed => getBreedWithImageUrl(breed))).then(breedsWithImageUrls =>
-      breedsWithImageUrls.filter(({ name, url }) => name && url),
-    );
+    return Promise.all(
+      breeds.filter(breed => breed.reference_image_id).map(breed => getBreedWithImageUrl(breed)),
+    ).then(breedsWithImageUrls => breedsWithImageUrls.filter(({ name, url }) => name && url));
   });
 }
 

@@ -4,13 +4,15 @@
 
 lovely dog app (dogs, dogs and nothing except dogs!)
 
+![](https://media.istockphoto.com/vectors/cute-jack-russell-terrier-paws-up-over-wall-dog-face-cartoon-vector-vector-id1158317995?k=6&m=1158317995&s=170667a&w=0&h=uySmCgZA_iRsKCgICEibxNIrcdBcTAmr-BXIlEqwtu4=)
+
 #### Api:
 
-https://docs.thedogapi.com
+[API](https://docs.thedogapi.com)
 
-#### State storing:
+#### Demo:
 
-SessionStorage or LocaleStorage
+[DEMO](https://nadsatt.github.io/dummyapp/)
 
 #### Main features (by priority):
 
@@ -42,5 +44,3 @@ SessionStorage or LocaleStorage
 - filter loaded dog breed list by breed, limit and sort by order ('after-fetching' filters within **breeds** page)
 - fetch dog img list by search word (**search** page)
 - watch dog info (**breed-details** page)
-
-![](https://media.istockphoto.com/vectors/cute-jack-russell-terrier-paws-up-over-wall-dog-face-cartoon-vector-vector-id1158317995?k=6&m=1158317995&s=170667a&w=0&h=uySmCgZA_iRsKCgICEibxNIrcdBcTAmr-BXIlEqwtu4=)
