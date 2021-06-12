@@ -219,12 +219,12 @@ var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"styles/styles.css":[function(require,module,exports) {
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"styles.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"./reset.css":"styles/reset.css","./main.css":"styles/main.css","./home.css":"styles/home.css","./content.css":"styles/content.css","./banner.css":"styles/banner.css","./breed-details.css":"styles/breed-details.css","./loading.css":"styles/loading.css","_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./styles/reset.css":"styles/reset.css","./styles/main.css":"styles/main.css","./styles/home.css":"styles/home.css","./styles/content.css":"styles/content.css","./styles/banner.css":"styles/banner.css","./styles/breed-details.css":"styles/breed-details.css","./styles/loading.css":"styles/loading.css","_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -252,7 +252,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60337" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55727" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -428,4 +428,4 @@ function hmrAcceptRun(bundle, id) {
   }
 }
 },{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js"], null)
-//# sourceMappingURL=/styles.956d002c.js.map
+//# sourceMappingURL=/styles.8986bff4.js.map
